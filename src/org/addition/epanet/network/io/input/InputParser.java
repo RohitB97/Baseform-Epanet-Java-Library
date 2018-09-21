@@ -54,12 +54,12 @@ public abstract class InputParser {
         switch (type) {
             case INP_FILE:
                 return new InpParser(log);
-            case EXCEL_FILE:
-                return new ExcelParser(log);
-            case XML_FILE:
-                return new XMLParser(log,false);
-            case XML_GZ_FILE:
-                return new XMLParser(log,true);
+            // case EXCEL_FILE:
+            //     return new ExcelParser(log);
+            // case XML_FILE:
+            //     return new XMLParser(log,false);
+            // case XML_GZ_FILE:
+            //     return new XMLParser(log,true);
             case NULL_FILE:
                 return new NullParser(log);
         }

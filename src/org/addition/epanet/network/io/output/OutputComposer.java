@@ -37,12 +37,12 @@ public abstract class OutputComposer {
         switch (type) {
             case INP_FILE:
                 return new InpComposer();
-            case EXCEL_FILE:
-                return new ExcelComposer();
-            case XML_FILE:
-                return new XMLComposer(false);
-            case XML_GZ_FILE:
-                return new XMLComposer(true);
+            // case EXCEL_FILE:
+            //     return new ExcelComposer();
+            // case XML_FILE:
+            //     return new XMLComposer(false);
+            // case XML_GZ_FILE:
+            //     return new XMLComposer(true);
         }
         return null;
     }

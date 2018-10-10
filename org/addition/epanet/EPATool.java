@@ -154,7 +154,7 @@ public class EPATool {
     }
 
 
-    public static void main(String[] args) {
+    public EPATool(InputStream inStream1, InputStream inStream2) {
         Logger log = Logger.getLogger(EPATool.class.toString());
         log.setUseParentHandlers(false);
 
@@ -170,12 +170,8 @@ public class EPATool {
         List<String> targetNodes = new ArrayList<String>();
         List<String> targetLinks = new ArrayList<String>();
 
-        File f = new File(args[0]);
-
         try {
             InputParser parserINP = InputParser.create(Network.FileType.INP_FILE, log);
-            InputStream inStream1 = new FileInputStream(f);
-            InputStream inStream2 = new FileInputStream(f);
             parserINP.parse(net, inStream1, inStream2);
             pMap = net.getPropertiesMap();
 
@@ -239,116 +235,116 @@ public class EPATool {
 
             HydraulicReader hydReader = new HydraulicReader(new RandomAccessFile(hydFile, "r"));
 
-            BufferedWriter nodesTextWriter = null;
-            BufferedWriter linksTextWriter = null;
-            File nodesOutputFile = null;
-            File linksOutputFile = null;
+            // BufferedWriter nodesTextWriter = null;
+            // BufferedWriter linksTextWriter = null;
+            // File nodesOutputFile = null;
+            // File linksOutputFile = null;
 
-            if (targetNodes.size() == 0 && targetLinks.size() == 0 || targetNodes.size() > 0) {
-                nodesOutputFile = new File(f.getAbsolutePath() + ".nodes.out");
-                nodesTextWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodesOutputFile), "UTF-8"));
+            // if (targetNodes.size() == 0 && targetLinks.size() == 0 || targetNodes.size() > 0) {
+            //     nodesOutputFile = new File(f.getAbsolutePath() + ".nodes.out");
+            //     nodesTextWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(nodesOutputFile), "UTF-8"));
 
-                nodesTextWriter.write("\t");
-                for (NodeVariableType nodeVar : nodesVariables) {
-                    nodesTextWriter.write("\t");
-                    nodesTextWriter.write(nodeVar.name);
-                }
-                nodesTextWriter.write("\n\t");
+            //     nodesTextWriter.write("\t");
+            //     for (NodeVariableType nodeVar : nodesVariables) {
+            //         nodesTextWriter.write("\t");
+            //         nodesTextWriter.write(nodeVar.name);
+            //     }
+            //     nodesTextWriter.write("\n\t");
 
-                for (NodeVariableType nodeVar : nodesVariables) {
-                    nodesTextWriter.write("\t");
-                    nodesTextWriter.write(net.getFieldsMap().getField(nodeVar.type).getUnits());
-                }
-                nodesTextWriter.write("\n");
-            }
-
-
-            if (targetNodes.size() == 0 && targetLinks.size() == 0 || targetLinks.size() > 0) {
-                linksOutputFile = new File(f.getAbsolutePath() + ".links.out");
-                linksTextWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(linksOutputFile), "UTF-8"));
-
-                linksTextWriter.write("\t");
-                for (LinkVariableType linkVar : linksVariables) {
-                    linksTextWriter.write("\t");
-                    linksTextWriter.write(linkVar.name);
-                }
-                linksTextWriter.write("\n\t");
-
-                for (LinkVariableType linkVar : linksVariables) {
-                    linksTextWriter.write("\t");
-                    if (linkVar.type == null) {
-                        continue;
-                    }
-                    linksTextWriter.write(net.getFieldsMap().getField(linkVar.type).getUnits());
-                }
-                linksTextWriter.write("\n");
-            }
+            //     for (NodeVariableType nodeVar : nodesVariables) {
+            //         nodesTextWriter.write("\t");
+            //         nodesTextWriter.write(net.getFieldsMap().getField(nodeVar.type).getUnits());
+            //     }
+            //     nodesTextWriter.write("\n");
+            // }
 
 
-            for (long time = pMap.getRstart(); time <= pMap.getDuration(); time += pMap.getRstep()) {
-                AwareStep step = hydReader.getStep((int) time);
+            // if (targetNodes.size() == 0 && targetLinks.size() == 0 || targetLinks.size() > 0) {
+            //     linksOutputFile = new File(f.getAbsolutePath() + ".links.out");
+            //     linksTextWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(linksOutputFile), "UTF-8"));
 
-                int i = 0;
+            //     linksTextWriter.write("\t");
+            //     for (LinkVariableType linkVar : linksVariables) {
+            //         linksTextWriter.write("\t");
+            //         linksTextWriter.write(linkVar.name);
+            //     }
+            //     linksTextWriter.write("\n\t");
 
-                if (targetTimes.size() > 0 && !targetTimes.contains(time))
-                    continue;
+            //     for (LinkVariableType linkVar : linksVariables) {
+            //         linksTextWriter.write("\t");
+            //         if (linkVar.type == null) {
+            //             continue;
+            //         }
+            //         linksTextWriter.write(net.getFieldsMap().getField(linkVar.type).getUnits());
+            //     }
+            //     linksTextWriter.write("\n");
+            // }
 
-                if (nodesTextWriter != null) {
-                    for (Node node : net.getNodes()) {
-                        if (targetNodes.size() > 0 && !targetNodes.contains(node.getId()))
-                            continue;
 
-                        nodesTextWriter.write(node.getId());
+            // for (long time = pMap.getRstart(); time <= pMap.getDuration(); time += pMap.getRstep()) {
+            //     AwareStep step = hydReader.getStep((int) time);
 
-                        nodesTextWriter.write("\t");
-                        nodesTextWriter.write(Utilities.getClockTime(time));
+            //     int i = 0;
 
-                        for (NodeVariableType nodeVar : nodesVariables) {
-                            nodesTextWriter.write("\t");
-                            Double val = nodeVar.getValue(net.getFieldsMap(), step, node, i);
-                            nodesTextWriter.write(convertToScientifcNotation(val, 1000, 0.01, 2));
-                        }
+            //     if (targetTimes.size() > 0 && !targetTimes.contains(time))
+            //         continue;
 
-                        nodesTextWriter.write("\n");
+            //     if (nodesTextWriter != null) {
+            //         for (Node node : net.getNodes()) {
+            //             if (targetNodes.size() > 0 && !targetNodes.contains(node.getId()))
+            //                 continue;
 
-                        i++;
-                    }
-                }
+            //             nodesTextWriter.write(node.getId());
 
-                i = 0;
+            //             nodesTextWriter.write("\t");
+            //             nodesTextWriter.write(Utilities.getClockTime(time));
 
-                if (linksTextWriter != null) {
-                    for (Link link : net.getLinks()) {
-                        if (targetLinks.size() > 0 && !targetLinks.contains(link.getId()))
-                            continue;
+            //             for (NodeVariableType nodeVar : nodesVariables) {
+            //                 nodesTextWriter.write("\t");
+            //                 Double val = nodeVar.getValue(net.getFieldsMap(), step, node, i);
+            //                 nodesTextWriter.write(convertToScientifcNotation(val, 1000, 0.01, 2));
+            //             }
 
-                        linksTextWriter.write(link.getId());
+            //             nodesTextWriter.write("\n");
 
-                        linksTextWriter.write("\t");
-                        linksTextWriter.write(Utilities.getClockTime(time));
+            //             i++;
+            //         }
+            //     }
 
-                        for (LinkVariableType linkVar : linksVariables) {
-                            linksTextWriter.write("\t");
-                            Double val = linkVar.getValue(net.getPropertiesMap().getFormflag(), net.getFieldsMap(), step, link, i);
-                            linksTextWriter.write(convertToScientifcNotation(val, 1000, 0.01, 2));
-                        }
+            //     i = 0;
 
-                        linksTextWriter.write("\n");
+            //     if (linksTextWriter != null) {
+            //         for (Link link : net.getLinks()) {
+            //             if (targetLinks.size() > 0 && !targetLinks.contains(link.getId()))
+            //                 continue;
 
-                        i++;
-                    }
-                }
-            }
+            //             linksTextWriter.write(link.getId());
 
-            if (nodesTextWriter != null) {
-                nodesTextWriter.close();
-                consoleLog("NODES FILE \"" + nodesOutputFile.getAbsolutePath() + "\"");
-            }
+            //             linksTextWriter.write("\t");
+            //             linksTextWriter.write(Utilities.getClockTime(time));
 
-            if (linksTextWriter != null) {
-                linksTextWriter.close();
-                consoleLog("LINKS FILES \"" + nodesOutputFile.getAbsolutePath() + "\"");
-            }
+            //             for (LinkVariableType linkVar : linksVariables) {
+            //                 linksTextWriter.write("\t");
+            //                 Double val = linkVar.getValue(net.getPropertiesMap().getFormflag(), net.getFieldsMap(), step, link, i);
+            //                 linksTextWriter.write(convertToScientifcNotation(val, 1000, 0.01, 2));
+            //             }
+
+            //             linksTextWriter.write("\n");
+
+            //             i++;
+            //         }
+            //     }
+            // }
+
+            // if (nodesTextWriter != null) {
+            //     nodesTextWriter.close();
+            //     consoleLog("NODES FILE \"" + nodesOutputFile.getAbsolutePath() + "\"");
+            // }
+
+            // if (linksTextWriter != null) {
+            //     linksTextWriter.close();
+            //     consoleLog("LINKS FILES \"" + nodesOutputFile.getAbsolutePath() + "\"");
+            // }
 
             consoleLog("END_RUN_OK");
         } catch (ENException e) {
